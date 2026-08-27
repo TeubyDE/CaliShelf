@@ -1,0 +1,6 @@
+CaliShelf
+
+Pushes audiobooks flagged in Calibre (custom column #audiobook = Yes) to a
+self-hosted Audiobookshelf server, skipping anything already present.
+Audiobookshelf is always asked live whether a book already exists -- no
+local sync ledger is kept.
