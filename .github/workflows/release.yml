@@ -1,0 +1,74 @@
+name: Test and Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e ".[dev]"
+      - run: ruff check calishelf tests calibre_plugin
+      - run: pytest -q
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Version lives only in git tags, never committed back to main --
+      # pushing to main is blocked by the branch ruleset (there's no clean
+      # bypass entry for the default GITHUB_TOKEN, only a real PAT would
+      # work, which isn't worth the extra secret for this). Pushing a new
+      # tag is a separate ref and isn't restricted by the ruleset.
+      - name: Compute next version
+        id: version
+        run: |
+          latest_tag=$(git tag --list 'v*' --sort=-v:refname | head -n1)
+          # Falls back to the version already committed in __init__.py (not
+          # v0.0.0) so the first auto-release doesn't look lower than what's
+          # already in the source.
+          latest_tag=${latest_tag:-v0.1.0}
+          version=${latest_tag#v}
+          IFS='.' read -r major minor patch <<< "$version"
+          patch=$((patch + 1))
+          echo "major=$major" >> "$GITHUB_OUTPUT"
+          echo "minor=$minor" >> "$GITHUB_OUTPUT"
+          echo "patch=$patch" >> "$GITHUB_OUTPUT"
+          echo "tag=v$major.$minor.$patch" >> "$GITHUB_OUTPUT"
+
+      # Stamps the real version into the zip's plugin metadata for this
+      # build only -- calibre_plugin/__init__.py in the repo itself stays
+      # untouched, since we never commit back to main.
+      - name: Stamp version into plugin metadata
+        run: |
+          # Anchored to line start + exact indentation so this can't also
+          # match "minimum_calibre_version = (...)" on the next line (which
+          # contains "version = (...)" as a substring too).
+          sed -i "s/^    version = ([0-9]*, [0-9]*, [0-9]*)/    version = (${{ steps.version.outputs.major }}, ${{ steps.version.outputs.minor }}, ${{ steps.version.outputs.patch }})/" calibre_plugin/__init__.py
+
+      - name: Build plugin zip
+        run: python3 scripts/build_plugin_zip.py
+
+      - name: Tag this release
+        run: |
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: true
+          files: dist/CaliShelf.zip
