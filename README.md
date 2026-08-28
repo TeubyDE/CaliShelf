@@ -14,12 +14,24 @@ CaliShelf lädt die Hörbücher, die du in Calibre markierst, automatisch zu
 deinem Audiobookshelf-Server hoch. Kein manuelles Kopieren, keine
 Duplikate bei erneutem Ausführen.
 
+### Installation
+
+1. Die neueste `CaliShelf.zip` von den
+   [GitHub Releases](https://github.com/TeubyDE/CaliShelf/releases/latest)
+   herunterladen.
+2. In Calibre: Menü `Einstellungen` → `Einstellungen` (öffnet das große
+   Einstellungsfenster) → Kategorie **"Erweitert"** → **"Erweiterungen"**.
+3. Dort den Button zum Laden eines Plugins aus einer Datei anklicken und
+   die heruntergeladene `CaliShelf.zip` auswählen.
+4. Calibre einmal neu starten, falls du dazu aufgefordert wirst.
+
+Ein neues Bücherregal-Icon erscheint danach automatisch in der Toolbar.
+
 ### Einmalig einrichten
 
 1. Custom Column `#audiobook` (Ja/Nein) in Calibre anlegen, falls noch
    nicht vorhanden.
-2. Plugin installieren (siehe unten).
-3. Über den Toolbar-Button → Dropdown-Pfeil → "Configure CaliShelf..."
+2. Über den Toolbar-Button → Dropdown-Pfeil → "Configure CaliShelf..."
    eintragen: Audiobookshelf-URL, API-Key, Library-ID und Folder-ID (per
    "Discover libraries..." auswählbar, kein Abtippen nötig).
 
@@ -49,12 +61,22 @@ noch einmal hochgeladen.
 CaliShelf uploads the audiobooks you flag in Calibre to your Audiobookshelf
 server automatically. No manual copying, no duplicates on repeated runs.
 
+### Installation
+
+1. Download the latest `CaliShelf.zip` from the
+   [GitHub Releases page](https://github.com/TeubyDE/CaliShelf/releases/latest).
+2. In Calibre: `Preferences` → `Plugins`.
+3. Click the "Load plugin from file" button and pick the downloaded
+   `CaliShelf.zip`.
+4. Restart Calibre if prompted to.
+
+A new bookshelf icon then shows up automatically in the toolbar.
+
 ### One-time setup
 
 1. Create the `#audiobook` custom column (Yes/No) in Calibre, if it
    doesn't exist yet.
-2. Install the plugin (see below).
-3. Via the toolbar button -> dropdown arrow -> "Configure CaliShelf...",
+2. Via the toolbar button -> dropdown arrow -> "Configure CaliShelf...",
    enter the Audiobookshelf URL, API key, library ID and folder ID
    ("Discover libraries..." lets you pick these instead of typing them).
 
